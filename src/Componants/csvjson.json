@@ -1,0 +1,46 @@
+[
+  {
+    "EAN_Barcode": 5016379401015,
+    "ASINCode": 3466752,
+    "ProductDescription": "4Head Cooling Quickstrip",
+    "SupplierName": "ALLOGA - CEUTA",
+    "PackSize": 4,
+    "Brand": "Head Stick",
+    "TotalStock": 2500,
+    "SinglePrice": 2.17,
+    "CasePrice": 13.02
+  },
+  {
+    "EAN_Barcode": 5016379400001,
+    "ASINCode": 2912988,
+    "ProductDescription": "4Head Stick",
+    "SupplierName": "ALLOGA - CEUTA",
+    "PackSize": "3.6g",
+    "Brand": "Head Stick",
+    "TotalStock": 25,
+    "SinglePrice": 3.7,
+    "CasePrice": 22.2
+  },
+  {
+    "EAN_Barcode": 7610313202003,
+    "ASINCode": 8010597,
+    "ProductDescription": "A Vogel Atrogel Arnica Gel",
+    "SupplierName": "A.VOGEL LTD",
+    "PackSize": "100ml",
+    "Brand": "Vogel",
+    "TotalStock": 87,
+    "SinglePrice": 8.65,
+    "CasePrice": 51.9
+  },
+  {
+    "EAN_Barcode": 7610313131358,
+    "ASINCode": 782037,
+    "ProductDescription": "A Vogel Coughs Colds & Flu Oral Drops Echinaforce",
+    "SupplierName": "A.VOGEL LTD",
+    "PackSize": "50ml",
+    "Brand": "Vogel",
+    "TotalStock": 95,
+    "SinglePrice": 6.69,
+    "CasePrice": 40.14
+  }
+]
