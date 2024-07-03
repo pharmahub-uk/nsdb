@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 // import DataTable from 'react-data-table-component';
-import jsonData from './csvjson.json';
+// import jsonData from './csvjson.json';
 
 export default function Supplier() {
    

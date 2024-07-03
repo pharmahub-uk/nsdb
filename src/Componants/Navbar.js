@@ -1,11 +1,44 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+
+    const [auth, setAuth] = useState(false);
+    const [message, setMessage] = useState('');
+    const [name, setUname] = useState('');
+
+    const navigate = useNavigate();
+    axios.defaults.withCredentials = true;
+    useEffect(() => {
+         axios.get("http://localhost:8081")
+         .then(res => {
+            console.log(res.data);
+            if(res.data.Status === "Success"){
+                setAuth(true);
+                setUname(res.data.name);
+                console.log(res.data.name);
+                // navigate('/Signin');
+
+            }else{
+                setAuth(false);
+                setMessage(res.data.Error);
+            }
+        })
+    }, [])
+
+    const handleDelete = () => {
+     axios.get('http://localhost:8081/logout')
+     .then(res =>{
+        window.location.reload(true);
+     }).catch(err => console.log(err)); 
+    } 
+
+   
   return (
     <div className="dashboard-header">
             <nav className="navbar navbar-expand-lg bg-white fixed-top">
-                <a className="navbar-brand" href="index.html"><img src="images/NSDB Logo.svg" alt="" style={{height: "45px"}}/></a>
+                <Link className="navbar-brand" to="/"><img src="images/NSDB Logo.svg" alt="" style={{height: "45px"}}/></Link>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -98,13 +131,26 @@ export default function Navbar() {
                         <li className="nav-item dropdown nav-user">
                             <a className="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="images/avatar-1.jpg" alt="" className="user-avatar-md rounded-circle"/></a>
                             <div className="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
-                                <div className="nav-user-info">
-                                    <h5 className="mb-0 text-white nav-user-name">John Abraham </h5>
-                                    <span className="status"></span><span className="ml-2">Available</span>
-                                </div>
-                                <Link className="dropdown-item" to="/Profile"><i className="fas fa-user mr-2"></i>Account</Link>
-                                <Link className="dropdown-item" href="/Setting"><i className="fas fa-cog mr-2"></i>Setting</Link>
-                                <Link className="dropdown-item" to="/Login"><i className="fas fa-power-off mr-2"></i>Logout</Link>
+                                {
+                                    auth ?
+                                    <div>
+                                        <div className="nav-user-info">
+                                            <h5 className="mb-0 text-white nav-user-name">Hi. {name}</h5>
+                                            <span className="status"></span><span className="ml-2">Available</span>
+                                        </div>
+                                        <Link className="dropdown-item" to="/Profile"><i className="fas fa-user mr-2"></i>Account</Link>
+                                        <Link className="dropdown-item" href="/Setting"><i className="fas fa-cog mr-2"></i>Setting</Link>
+                                        <Link className="dropdown-item" to="/Signin" onClick={handleDelete}><i className="fas fa-sign-out-alt mr-2"></i>Logout</Link>
+                                    </div>
+                                    :
+                                    <div>
+                                        <div className="nav-user-info">
+                                            <span className="status"></span><span className="ml-2">{message}</span>
+                                        </div>
+                                        <Link className="dropdown-item" to="/Signin"><i className="fas fa-sign-in-alt mr-2"></i>Login</Link>
+                                    </div>    
+                                }
+                                
                             </div>
                         </li>
                     </ul>
