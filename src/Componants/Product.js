@@ -45,10 +45,10 @@ export default function Product() {
     if (Search == "") {
       return item;
     } else if (
-      item.EAN_Barcode.toLowerCase().includes(Search.toLowerCase()) ||
+      item.Barcode.toLowerCase().includes(Search.toLowerCase()) ||
       item.ASIN_Code.toLowerCase().includes(Search.toLowerCase()) ||
       item.Product_Description.toLowerCase().includes(Search.toLowerCase()) ||
-      item.Supplier_Name.toLowerCase().includes(Search.toLowerCase()) ||
+      item.Brand.toLowerCase().includes(Search.toLowerCase()) ||
       item.Pack_Size.toLowerCase().includes(Search.toLowerCase()) ||
       item.Total_Stock.toLowerCase().includes(Search.toLowerCase()) ||
       item.Single_Price.toLowerCase().includes(Search.toLowerCase()) ||
@@ -72,7 +72,7 @@ export default function Product() {
           setProduct(resData);
           // setFilter(resData);
           // setSearch(resData);
-          getProduct();
+          //getProduct();
         } else if (!Array.isArray(resData)) {
           return <div>Loading...</div>;
         }
@@ -90,18 +90,24 @@ export default function Product() {
 
   {/* Model Box */}
 
-  //  const [ModelData, setModelData] = useState([])
-
-  //  const showDetails = async(ID) =>{
-  //      fetch(`http://localhost:8080/nsdb/Product_API.php/${ID}`)
-  //     .then(response => response.json())
-  //     .then(res => res.setModelData(res))
-  //  }
-
+   const [ModelData, setModelData] = useState([])
+   const showDetails = async(Barcode) =>{
+    try{
+      debugger;
+      const Res = await fetch(`http://localhost:8080/nsdb/Product_Supplier.php?Barcode=${Barcode}`);
+      const Supplierdata = await Res.json();
+      console.log(Supplierdata);
+      setModelData(Supplierdata);
+    }catch(err){
+      console.error("Error fetching Supplier Details:", err);
+    }
+       
+   }
+    
   {/* end Model Box */}
 
 
-  {/* Pagination of Datatable */}
+  {/* Pagination of Product Datatable */}
 
   const [CurrentPage, SetCurrentPage] = useState(1);
   const RecordsPerPage = 10;
@@ -130,7 +136,7 @@ export default function Product() {
     }
   }
 
-  { /* end Pagination of Datatable */}
+  { /* end Pagination of Product Datatable */}
 
   { /* Expandable Row in Datatable */}
 
@@ -186,21 +192,45 @@ export default function Product() {
       return "Loading..."; // Handle loading state
     }
   };
-  {
-    /* end Currency Conveter */
-  }
+  { /* end Currency Conveter */}
 
-  // const getProduct = async() =>{
+  { /* Supplier Dropdown */}
+  const [Supplier, setSupplierData] = useState([])
+  useEffect(() => {
+    const getSupplier = async() =>{
+      try{
+        
+        const resSupplier = await fetch(`http://localhost:8080/nsdb/Supplier.php`);
+        const result_Supplier = await resSupplier.json();
+        console.log(result_Supplier);
+        setSupplierData(result_Supplier);
+      }catch(err){
+        console.error("Error fetching Supplier Details:", err);
+      }
+        
+    }
+    getSupplier();
+  }, []);
+  { /* end Supplier Dropdown */}
 
-  //     const result = await axios.get("http://localhost:8080/nsdb/Product_API.php");
-  //     setProduct(result.data.phpresult);
-  //     console.log(result.data.result);
-
-  // };
-
-  // useEffect(() => {
-  //     getProduct();
-  // }, []);
+  { /* Currencies Dropdown */}
+  const [Currencies, setCurrenciesData] = useState([])
+  useEffect(() => {
+    const getCurrencies = async() =>{
+      try{
+        
+        const resCurrencies = await fetch(`http://localhost:8080/nsdb/Currencies.php`);
+        const result_Currencies = await resCurrencies.json();
+        console.log(result_Currencies);
+        setCurrenciesData(result_Currencies);
+      }catch(err){
+        console.error("Error fetching Supplier Details:", err);
+      }
+        
+    }
+    getCurrencies();
+  }, []);
+  { /* end Currencies Dropdown */}
 
   return (
     <div className="dashboard-wrapper">
@@ -258,7 +288,16 @@ export default function Product() {
                                 <div className="form-group">
                                     <label for="input-select">Supplier Name<span className="text-danger">*</span></label>
                                     <select className="form-control" id="input-select">
-                                        <option>Choose Example</option>
+                                          <option>Select Supplier</option>
+                                      {Supplier.length > 0 ? (
+                                        Supplier.map((sdata) => (
+                                        <>
+                                          <option>{sdata.Supplier_Name}</option>
+                                        </>
+                                      ))
+                                      ) : (
+                                          <option>-- Not Fetching Supplier --</option>
+                                      )}  
                                     </select>
                                 </div>
                             </form>
@@ -268,7 +307,16 @@ export default function Product() {
                                 <div className="form-group">
                                     <label for="input-select">Currency<span className="text-danger">*</span></label>
                                     <select className="form-control" id="input-select">
-                                        <option>Choose Example</option>
+                                          <option>Select Currency</option>
+                                      {Currencies.length > 0 ? (
+                                        Currencies.map((cdata) => (
+                                        <>
+                                          <option value={cdata.currencies_status}>{cdata.currencies_name} - {cdata.currencies_code}</option>
+                                        </>
+                                      ))
+                                      ) : (
+                                          <option>-- Not Fetching Currencies --</option>
+                                      )}  
                                     </select>
                                 </div>
                             </form>
@@ -378,18 +426,19 @@ export default function Product() {
                                       <span className="badge badge-pill badge-info">£ {convertToGBP(data.Case_Price)}</span>
                                     </td>
                                     {/* <td> <span className='badge badge-pill badge-dark' onClick={event => handleEpandRow(event, data.ID)}>
-                                                                                        {
-                                                                                        expandState[data.ID] ?
-                                                                                            <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>
-                                                                                        }
-                                                                                    </span>
-                                                                                </td> */}
+                                              {
+                                              expandState[data.ID] ?
+                                                  <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>
+                                              }
+                                          </span>
+                                      </td> */}
                                     <td>
                                       {/* onClick={(e) => showDetails(data.ID)} */}
-                                      <a href="#" className="btn btn-rounded btn-dark btn-xs" data-toggle="modal" data-target="#exampleModal"><i className="fas fa-eye"></i></a>
+                                      <a href="#" className="btn btn-rounded btn-dark btn-xs" data-toggle="modal" onClick={(e) => showDetails(data.Barcode)} data-target="#exampleModal"><i className="fas fa-eye"></i></a>
                                     </td>
                                   </tr>
                                   <>
+                                    {/* Expnadable Row of Datatabale */}
                                     {expandedRows.includes(data.Product_ID) ? (
                                       <tr>
                                         <td colspan="11">
@@ -486,7 +535,8 @@ export default function Product() {
                                         </td>
                                       </tr>
                                     ) : null}
-                                  </>
+                                  </> 
+                                    {/* end Expnadable Row of Datatabale */}
                                 </>
                               ))
                             ) : (
@@ -498,11 +548,12 @@ export default function Product() {
                             )}
                           </tbody>
                         </table>
+                        {/* fetch multiple supplier based on Product Barcode in Modal Box */}
                         <div className=" modal fade " id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                           <div className="modal-dialog modal-xl" role="document">
                             <div className="modal-content ">
                               <div className="modal-header">
-                                <h3 className="modal-title" id="exampleModalLabel">Product Name</h3>
+                                <h3 className="modal-title" id="exampleModalLabel">Supplier Details</h3>
                                 <button href="#" className="close" data-dismiss="modal"aria-label="Close">
                                   <span aria-hidden="true">&times;</span>
                                 </button>
@@ -511,102 +562,60 @@ export default function Product() {
                               <div className="modal-body">
                                 <div className="card-header">
                                   <div>
-                                    <h3 className="mb-0">Supplier Details</h3>
-                                    {/* <p>Supplier details based on product details.</p> */}
+                                    {/* <h3 className="mb-0">Supplier Details</h3> */}
+                                    
 
                                     <div className="row">
                                       <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-2">
                                         <label for="validationCustom01">
                                           Search
                                         </label>
-                                        <input
-                                          type="text"
-                                          placeholder="Search something..."
-                                          className="form-control"
-                                          onChange={(event) =>
-                                            setSearch(event.target.value)
-                                          }
-                                        />
+                                        <input type="text" placeholder="Search something..." className="form-control" onChange={(event) =>setSearch(event.target.value)} />
                                       </div>
                                     </div>
                                   </div>
                                 </div>
                                 <div className="table-responsive">
-                                  <table
-                                    id="example"
-                                    className="table table-striped table-bordered second"
-                                    style={{ width: "100%" }}
-                                  >
+                                  <table id="example" className="table table-striped table-bordered second" style={{ width: "100%" }}>
                                     <thead>
                                       <tr>
-                                        <th>EAN/Barcode</th>
-                                        <th>ASIN Code</th>
-                                        <th>Product Description</th>
+                                        <th>Barcode</th>
+                                        <th>Supplier Code</th>
                                         <th>Supplier Name</th>
-                                        <th>Pack Size</th>
-                                        <th>Brand</th>
-                                        <th>Total Stock</th>
                                         <th>Single Price</th>
                                         <th>Case Price</th>
-                                        {/* <th>Action</th> */}
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {
-                                      Records.length > 0 ? (
-                                        Records.map((data) => (
+                                    {
+                                      ModelData.length > 0 ? (
+                                        ModelData.map((data) => (
                                           <>
-                                            <tr key={data}>
-                                              <td>{data.EAN_Barcode}</td>
-                                              <td>{data.ASIN_Code}</td>
-                                              <td>
-                                                {data.Product_Description}
-                                              </td>
+                                            <tr >
+                                              <td>{data.Barcode}</td>
+                                              <td>{data.Supplier_Code}</td>
                                               <td>{data.Supplier_Name}</td>
-                                              <td>{data.Pack_Size}</td>
-                                              <td>{data.Brand}</td>
-                                              <td>{data.Total_Stock}</td>
                                               <td>
-                                                <span className="badge badge-pill badge-warning">$ {data.Single_Price}</span>
-                                                <span className="badge badge-pill badge-info"> £{convertToGBP(data.Single_Price)}</span>
+                                                <span className="badge badge-pill badge-warning">$ {data.Single_Price}</span>{" "}
+                                                <span className="badge badge-pill badge-info"> £ {convertToGBP(data.Single_Price)}</span>
                                               </td>
                                               <td>
-                                                <span className="badge badge-pill badge-warning">$ {data.Case_Price}</span>
-                                                <span className="badge badge-pill badge-info">£{convertToGBP(data.Case_Price)}</span>
-                                              </td>
-                                              {/* <td> <span className='badge badge-pill badge-dark' onClick={event => handleEpandRow(event, data.ID)}>
-                                                                                                    {
-                                                                                                    expandState[data.ID] ?
-                                                                                                        <i className="fas fa-eye-slash"></i> : <i className="fas fa-eye"></i>
-                                                                                                    }
-                                                                                                </span>
-                                                                                            </td> */}
-                                              <td>
-                                                {/* onClick={(e) => showDetails(data.ID)} */}
-                                                <a type="file"href="#"className="btn btn-dark btn-sm"data-toggle="modal"data-target="#exampleModal"><i className="fas fa-upload"></i>{" "} Product</a>
+                                                <span className="badge badge-pill badge-warning">$ {data.Case_Price}</span>{" "}
+                                                <span className="badge badge-pill badge-info">£ {convertToGBP(data.Case_Price)}</span>
                                               </td>
                                             </tr>
-                                            <>
-                                              {expandedRows.includes(
-                                                data.Product_ID
-                                              ) ? (
-                                                <tr>
-                                                  <td>{data.ASIN_Code}</td>
-                                                  <td>{data.Product_Description}</td>
-                                                  <td>{data.Supplier_Name}</td>
-                                                  <td>{data.Pack_Size}</td>
-                                                  <td>{data.Brand}</td>
-                                                  <td>{data.Total_Stock}</td>
-                                                  <td>{"$"}{data.Single_Price}</td>
-                                                  <td>{"£"}{data.Case_Price}</td>
-                                                </tr>
-                                              ) : null}
-                                            </>
-                                          </>
-                                        ))
+                                            
+                                          </> 
+                                      ))
                                       ) : (
-                                        <td colspan={11}><p style={{ textAlign: "center" }}>No Products Available.</p></td>
+                                        <td colspan={5}>
+                                          <p style={{ textAlign: "center" }}>
+                                            No Products Available.
+                                          </p>
+                                        </td>
                                       )}
+                                      
+                                     
                                     </tbody>
                                     
                                   </table>
@@ -637,20 +646,14 @@ export default function Product() {
                                 </div>
                               </div>
                               <div className="modal-footer">
-                                <a
-                                  href="#"
-                                  className="btn btn-secondary"
-                                  data-dismiss="modal"
-                                >
-                                  Close
-                                </a>
-                                <a href="#" className="btn btn-primary">
-                                  Save changes
-                                </a>
+                                <a href="#" className="btn btn-secondary" data-dismiss="modal">Close</a>
+                                {/* <a href="#" className="btn btn-primary">Save changes</a> */}
                               </div>
                             </div>
                           </div>
                         </div>
+                        {/* end fetch multiple supplier based on Product Barcode in Modal Box */}
+                        
                         <div className="col-lg-12 card-body"style={{ textAlign: "left" }}>
                             <nav aria-label="Page navigation example">
                             <ul className="pagination justify-content-end">

@@ -19,12 +19,14 @@ export default function Navbar() {
                 setUname(res.data.name);
                 console.log(res.data.name);
                 // navigate('/Signin');
+                
 
             }else{
                 setAuth(false);
                 setMessage(res.data.Error);
             }
         })
+        
     }, [])
 
     const handleDelete = () => {

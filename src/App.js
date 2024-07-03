@@ -26,20 +26,19 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 function App() {
 
   return(
+     
     <BrowserRouter>
+      
       <div className="dashboard-main-wrapper">
         <Navbar/>
         <Sidebar/>
           <Routes>
             <Route path='/Signin' element={<Signin/>}/>
-            {/* <Route element={<ProtectedRoutes/>}> */}
             <Route path='/' element={<Dashboard/>}/>
             <Route path='/Supplier' element={<Supplier/>}/>
             <Route path='/Customer' element={<Customer/>}/>
             <Route path='/Product' element={<Product/>}/>
             <Route path='/Registration' element={<Registration/>}/>
-            {/* </Route> */}
-            
             <Route path='/*' element={<Error/>}/>
 
           </Routes>
