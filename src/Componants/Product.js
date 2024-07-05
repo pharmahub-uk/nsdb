@@ -9,7 +9,7 @@ import Footer from "./Footer";
 export default function Product() {
   const [Products, setProduct] = useState([]);
   const [Search, setSearch] = useState([]);
-  const [Filter, setFilter] = useState([]);
+  // const [Filter, setFilter] = useState([]);
 
   // Import CSV File
   const [file, setFile] = useState(null);
@@ -17,8 +17,7 @@ export default function Product() {
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
-
-  const handleUpload = () => {
+    const handleUpload = () => {
     const formData = new FormData();
     formData.append("file", file);
     console.log(formData);
@@ -45,8 +44,8 @@ export default function Product() {
     if (Search == "") {
       return item;
     } else if (
-      item.Barcode.toLowerCase().includes(Search.toLowerCase()) ||
       item.ASIN_Code.toLowerCase().includes(Search.toLowerCase()) ||
+      item.Barcode.toLowerCase().includes(Search.toLowerCase()) ||
       item.Product_Description.toLowerCase().includes(Search.toLowerCase()) ||
       item.Brand.toLowerCase().includes(Search.toLowerCase()) ||
       item.Pack_Size.toLowerCase().includes(Search.toLowerCase()) ||
@@ -72,7 +71,6 @@ export default function Product() {
           setProduct(resData);
           // setFilter(resData);
           // setSearch(resData);
-          //getProduct();
         } else if (!Array.isArray(resData)) {
           return <div>Loading...</div>;
         }
@@ -93,7 +91,7 @@ export default function Product() {
    const [ModelData, setModelData] = useState([])
    const showDetails = async(Barcode) =>{
     try{
-      debugger;
+      // debugger;
       const Res = await fetch(`http://localhost:8080/nsdb/Product_Supplier.php?Barcode=${Barcode}`);
       const Supplierdata = await Res.json();
       console.log(Supplierdata);
@@ -292,7 +290,7 @@ export default function Product() {
                                       {Supplier.length > 0 ? (
                                         Supplier.map((sdata) => (
                                         <>
-                                          <option>{sdata.Supplier_Name}</option>
+                                          <option value={sdata.Supplier_ID}>{sdata.Supplier_Name}</option>
                                         </>
                                       ))
                                       ) : (
@@ -619,7 +617,7 @@ export default function Product() {
                                     </tbody>
                                     
                                   </table>
-                                  <div className="col-lg-12 card-body "style={{ textAlign: "right", position:"static" }}>
+                                  {/* <div className="col-lg-12 card-body "style={{ textAlign: "right", position:"static" }}>
                                       <nav aria-label="Page navigation example">
                                         <ul className="pagination justify-content-end">
                                           <li className="page-item">
@@ -642,7 +640,7 @@ export default function Product() {
                                           </li>
                                         </ul>
                                       </nav>
-                                    </div>
+                                    </div> */}
                                 </div>
                               </div>
                               <div className="modal-footer">

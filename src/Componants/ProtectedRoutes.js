@@ -1,7 +1,19 @@
-// import { Outlet, Navigate } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
-//     const ProtectedRoutes = () => {
-//         const user = null
-//         return user ? <Outlet/> : <Navigate to="/Signin"/>
-//     }
-//     export default ProtectedRoutes
+const ProtectedRoutes = ({ component: Component, isAuthenticated, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        isAuthenticated ? (
+          <Component {...props} />
+        ) : (
+          <Redirect to="/signin" />
+        )
+      }
+    />
+  );
+};
+
+export default ProtectedRoutes;
