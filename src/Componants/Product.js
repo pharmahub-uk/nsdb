@@ -11,16 +11,31 @@ export default function Product() {
   const [Search, setSearch] = useState([]);
   // const [Filter, setFilter] = useState([]);
 
+  
+
   // Import CSV File
   const [file, setFile] = useState(null);
+  const [selectedValue, setSelectedValue] = useState('');
+
+  console.log("demoFirst"+selectedValue);
+
+  const handleDropdownChange = (e) => {
+    setSelectedValue(e.target.value);
+  };
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
     const handleUpload = () => {
+
+    if (!file || !selectedValue) {
+      alert('Please select a file and a dropdown value.');
+      return;
+    }
     const formData = new FormData();
     formData.append("file", file);
-    console.log(formData);
+    formData.append("dropdown", selectedValue);
+    
     axios
       .post("http://localhost:8081/upload", formData, {
         headers: {
@@ -44,8 +59,8 @@ export default function Product() {
     if (Search == "") {
       return item;
     } else if (
-      item.ASIN_Code.toLowerCase().includes(Search.toLowerCase()) ||
       item.Barcode.toLowerCase().includes(Search.toLowerCase()) ||
+      item.ASIN_Code.toLowerCase().includes(Search.toLowerCase()) ||
       item.Product_Description.toLowerCase().includes(Search.toLowerCase()) ||
       item.Brand.toLowerCase().includes(Search.toLowerCase()) ||
       item.Pack_Size.toLowerCase().includes(Search.toLowerCase()) ||
@@ -91,7 +106,7 @@ export default function Product() {
    const [ModelData, setModelData] = useState([])
    const showDetails = async(Barcode) =>{
     try{
-      // debugger;
+     
       const Res = await fetch(`http://localhost:8080/nsdb/Product_Supplier.php?Barcode=${Barcode}`);
       const Supplierdata = await Res.json();
       console.log(Supplierdata);
@@ -285,8 +300,8 @@ export default function Product() {
                             <form>
                                 <div className="form-group">
                                     <label for="input-select">Supplier Name<span className="text-danger">*</span></label>
-                                    <select className="form-control" id="input-select">
-                                          <option>Select Supplier</option>
+                                    <select className="form-control" id="input-select" value={selectedValue} onChange={handleDropdownChange}>
+                                          <option selected>Select Supplier</option>
                                       {Supplier.length > 0 ? (
                                         Supplier.map((sdata) => (
                                         <>
@@ -305,7 +320,7 @@ export default function Product() {
                                 <div className="form-group">
                                     <label for="input-select">Currency<span className="text-danger">*</span></label>
                                     <select className="form-control" id="input-select">
-                                          <option>Select Currency</option>
+                                          <option selected>Select Currency</option>
                                       {Currencies.length > 0 ? (
                                         Currencies.map((cdata) => (
                                         <>
